@@ -1,78 +1,227 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import prisma from '@/lib/prisma';
+import ProductCard from '@/components/ProductCard';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  category: string;
+  inStock: boolean;
+}
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+interface HomeProps {
+  products: Product[];
+  totalProducts: number;
+  currentPage: number;
+  totalPages: number;
+  searchQuery: string;
+  categories: string[];
+  selectedCategory: string;
+}
 
-export default function Home() {
+const PRODUCTS_PER_PAGE = 12;
+
+export default function Home({
+  products,
+  totalProducts,
+  currentPage,
+  totalPages,
+  searchQuery,
+  categories,
+  selectedCategory,
+}: HomeProps) {
+  const router = useRouter();
+
+  const buildUrl = (params: Record<string, string | number>) => {
+    const query = new URLSearchParams();
+    if (params.q || searchQuery) query.set('q', String(params.q ?? searchQuery));
+    if (params.category || selectedCategory) query.set('category', String(params.category ?? selectedCategory));
+    if (params.page) query.set('page', String(params.page));
+
+    // Remove empty params
+    if (query.get('q') === '') query.delete('q');
+    if (query.get('category') === '' || query.get('category') === 'All') query.delete('category');
+    if (query.get('page') === '1') query.delete('page');
+
+    const qs = query.toString();
+    return qs ? `/?${qs}` : '/';
+  };
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-    >
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the index.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <Head>
+        <title>ShopNova - Premium E-Commerce Store</title>
+        <meta name="description" content="Discover premium products at ShopNova. Browse our curated collection of electronics, furniture, accessories, and more." />
+      </Head>
+
+      {/* Hero Section */}
+      <section className="page-hero">
+        <h1>
+          {searchQuery
+            ? `Results for "${searchQuery}"`
+            : 'Discover Premium Products'}
+        </h1>
+        <p>
+          {searchQuery
+            ? `Found ${totalProducts} product${totalProducts !== 1 ? 's' : ''}`
+            : 'Curated collection of the finest products for your lifestyle'}
+        </p>
+      </section>
+
+      {/* Category Filters */}
+      <div className="category-filters">
+        <Link
+          href={buildUrl({ category: 'All', page: 1 })}
+          className={`category-chip ${!selectedCategory || selectedCategory === 'All' ? 'active' : ''}`}
+        >
+          All Products
+        </Link>
+        {categories.map((cat) => (
+          <Link
+            key={cat}
+            href={buildUrl({ category: cat, page: 1 })}
+            className={`category-chip ${selectedCategory === cat ? 'active' : ''}`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs/pages/getting-started?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {cat}
+          </Link>
+        ))}
+      </div>
+
+      {/* Product Grid */}
+      {products.length > 0 ? (
+        <div className="product-grid">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
-      </main>
-    </div>
+      ) : (
+        <div className="cart-empty">
+          <div className="cart-empty-icon">🔍</div>
+          <h2>No products found</h2>
+          <p>Try adjusting your search or filter criteria</p>
+          <Link href="/" className="cart-empty-btn">
+            View All Products
+          </Link>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          <Link
+            href={buildUrl({ page: currentPage - 1 })}
+            className={`pagination-btn ${currentPage <= 1 ? 'disabled' : ''}`}
+            aria-disabled={currentPage <= 1}
+            onClick={(e) => currentPage <= 1 && e.preventDefault()}
+            data-testid="pagination-prev"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Previous
+          </Link>
+
+          <span className="pagination-info">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <Link
+            href={buildUrl({ page: currentPage + 1 })}
+            className={`pagination-btn ${currentPage >= totalPages ? 'disabled' : ''}`}
+            aria-disabled={currentPage >= totalPages}
+            onClick={(e) => currentPage >= totalPages && e.preventDefault()}
+            data-testid="pagination-next"
+          >
+            Next
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
+        </div>
+      )}
+    </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { q = '', page = '1', category = '' } = context.query;
+  const searchQuery = Array.isArray(q) ? q[0] : q;
+  const selectedCategory = Array.isArray(category) ? category[0] : category;
+  const currentPage = Math.max(1, parseInt(Array.isArray(page) ? page[0] : page, 10) || 1);
+
+  try {
+    // Build where clause
+    const where: any = {};
+
+    if (searchQuery) {
+      where.OR = [
+        { name: { contains: searchQuery, mode: 'insensitive' } },
+        { description: { contains: searchQuery, mode: 'insensitive' } },
+      ];
+    }
+
+    if (selectedCategory && selectedCategory !== 'All') {
+      where.category = selectedCategory;
+    }
+
+    // Get total count for pagination
+    const totalProducts = await prisma.product.count({ where });
+    const totalPages = Math.max(1, Math.ceil(totalProducts / PRODUCTS_PER_PAGE));
+
+    // Fetch products with pagination
+    const products = await prisma.product.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip: (currentPage - 1) * PRODUCTS_PER_PAGE,
+      take: PRODUCTS_PER_PAGE,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        imageUrl: true,
+        category: true,
+        inStock: true,
+      },
+    });
+
+    // Get unique categories for filter chips
+    const allCategories = await prisma.product.findMany({
+      select: { category: true },
+      distinct: ['category'],
+      orderBy: { category: 'asc' },
+    });
+    const categories = allCategories.map((c) => c.category);
+
+    return {
+      props: {
+        products: JSON.parse(JSON.stringify(products)),
+        totalProducts,
+        currentPage,
+        totalPages,
+        searchQuery,
+        categories,
+        selectedCategory,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return {
+      props: {
+        products: [],
+        totalProducts: 0,
+        currentPage: 1,
+        totalPages: 1,
+        searchQuery: '',
+        categories: [],
+        selectedCategory: '',
+      },
+    };
+  }
+};
