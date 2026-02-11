@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ecommerce
     ports:
-      - '5432:5432'
+      - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./prisma/seed-data:/docker-entrypoint-initdb.d
@@ -35,7 +35,7 @@ services:
       - GITHUB_ID=${GITHUB_ID:-dummy}
       - GITHUB_SECRET=${GITHUB_SECRET:-dummy}
     command: >
-      sh -c "npx prisma generate && npm run dev"
+      sh -c "node node_modules/prisma/build/index.js generate && npm run dev"
 
 volumes:
   postgres_data:

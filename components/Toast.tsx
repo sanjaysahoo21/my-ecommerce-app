@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 
 interface ToastProps {
     message: string;
@@ -19,7 +19,7 @@ export default function Toast({ message, type, duration = 3000, onClose }: Toast
         return () => clearTimeout(timer);
     }, [duration, onClose]);
 
-    const iconPaths: Record<string, JSX.Element> = {
+    const iconPaths: Record<string, ReactNode> = {
         success: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
