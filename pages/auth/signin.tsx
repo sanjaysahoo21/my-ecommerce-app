@@ -21,8 +21,8 @@ export default function SignIn({ providers }: SignInProps) {
     return (
         <>
             <Head>
-                <title>Sign In - ShopNova</title>
-                <meta name="description" content="Sign in to your ShopNova account" />
+                <title>Sign In - ShopHere</title>
+                <meta name="description" content="Sign in to your ShopHere account" />
             </Head>
             <div className="signin-container">
                 <div className="signin-card">
@@ -39,7 +39,7 @@ export default function SignIn({ providers }: SignInProps) {
                                 </defs>
                             </svg>
                         </div>
-                        <h1>Welcome to ShopNova</h1>
+                        <h1>Welcome to ShopHere</h1>
                         <p>Sign in to access your cart and start shopping</p>
                     </div>
 

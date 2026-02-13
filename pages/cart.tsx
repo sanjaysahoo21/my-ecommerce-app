@@ -105,7 +105,7 @@ export default function CartPage() {
         return (
             <>
                 <Head>
-                    <title>Shopping Cart - ShopNova</title>
+                    <title>Shopping Cart - ShopHere</title>
                 </Head>
                 <div className="loading-container">
                     <div className="loading-spinner" />
@@ -143,7 +143,7 @@ export default function CartPage() {
     return (
         <>
             <Head>
-                <title>Shopping Cart ({cart.itemCount}) - ShopNova</title>
+                <title>Shopping Cart ({cart.itemCount}) - ShopHere</title>
                 <meta name="description" content="Review and manage your shopping cart items" />
             </Head>
 

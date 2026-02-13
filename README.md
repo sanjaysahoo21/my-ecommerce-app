@@ -1,6 +1,6 @@
-# ShopNova — E-Commerce Product Catalog
+# ShopHere — E-Commerce Product Catalog
 
-A full-stack, multi-page e-commerce product catalog built with **Next.js**, featuring Server-Side Rendering (SSR), API Routes, and NextAuth.js authentication. The application demonstrates modern web development patterns including a dark-theme premium UI, PostgreSQL database with Prisma ORM, and Docker containerization.
+A full-stack, multi-page e-commerce product catalog built with **Next.js**, featuring Server-Side Rendering (SSR), API Routes, and NextAuth.js authentication. The application demonstrates modern web development patterns including a Vercel-inspired monochrome UI, PostgreSQL database with Prisma ORM, and Docker containerization.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
@@ -24,7 +24,7 @@ A full-stack, multi-page e-commerce product catalog built with **Next.js**, feat
 - **NextAuth.js** with GitHub OAuth and Credentials-based login
 - **Prisma Adapter** for database-backed authentication
 - **JWT Session Strategy** for secure token management
-- **Custom Sign-In Page** with premium dark theme design
+- **Custom Sign-In Page** with premium monochrome design
 
 ### API Layer
 - `GET /api/products` — List products with search, filter, pagination
@@ -36,7 +36,7 @@ A full-stack, multi-page e-commerce product catalog built with **Next.js**, feat
 - All cart endpoints are **authenticated** and **validated with Zod**
 
 ### UI/UX
-- Premium **dark theme** with glassmorphism effects
+- **Vercel-Inspired Monochrome Theme** with toggleable Light/Dark modes
 - **Responsive design** for all screen sizes
 - **Micro-animations** on hover, transitions, and loading states
 - **Toast notifications** for cart operations

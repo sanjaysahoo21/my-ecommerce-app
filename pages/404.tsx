@@ -5,7 +5,7 @@ export default function Custom404() {
     return (
         <>
             <Head>
-                <title>404 - Page Not Found | ShopNova</title>
+                <title>404 - Page Not Found | ShopHere</title>
                 <meta name="description" content="The page you're looking for doesn't exist." />
             </Head>
             <div className="error-page">

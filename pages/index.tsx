@@ -56,8 +56,8 @@ export default function Home({
   return (
     <>
       <Head>
-        <title>ShopNova - Premium E-Commerce Store</title>
-        <meta name="description" content="Discover premium products at ShopNova. Browse our curated collection of electronics, furniture, accessories, and more." />
+        <title>ShopHere - Premium E-Commerce Store</title>
+        <meta name="description" content="Discover premium products at ShopHere. Browse our curated collection of electronics, furniture, accessories, and more." />
       </Head>
 
       {/* Hero Section */}

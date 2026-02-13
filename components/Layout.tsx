@@ -1,7 +1,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -11,6 +11,24 @@ export default function Layout({ children }: LayoutProps) {
     const { data: session } = useSession();
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
+    const [theme, setTheme] = useState('dark');
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }, []);
+
+    const toggleTheme = () => {
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+    };
+
+    if (!mounted) return null;
 
     // Don't show layout on sign-in page
     if (router.pathname === '/auth/signin') {
@@ -41,10 +59,33 @@ export default function Layout({ children }: LayoutProps) {
                                 </linearGradient>
                             </defs>
                         </svg>
-                        ShopNova
+                        ShopHere
                     </Link>
 
                     <div className="navbar-actions">
+                        <button
+                            onClick={toggleTheme}
+                            className="theme-toggle-btn"
+                            aria-label="Toggle Dark Mode"
+                        >
+                            {theme === 'dark' ? (
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                </svg>
+                            ) : (
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                            )}
+                        </button>
                         <form onSubmit={handleSearch} className="navbar-search">
                             <input
                                 type="text"
@@ -115,7 +156,7 @@ export default function Layout({ children }: LayoutProps) {
             </main>
 
             <footer className="footer">
-                <p>© 2026 ShopNova. Built with Next.js, Prisma & NextAuth.js</p>
+                <p>© 2026 ShopHere. Built with Next.js, Prisma & NextAuth.js</p>
             </footer>
         </>
     );
