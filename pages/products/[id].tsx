@@ -65,7 +65,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     return (
         <>
             <Head>
-                <title>{product.name} - ShopNova</title>
+                <title>{product.name} - ShopHere</title>
                 <meta name="description" content={product.description.substring(0, 160)} />
             </Head>
 
@@ -83,6 +83,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                         src={product.imageUrl}
                         alt={product.name}
                         className="product-detail-image"
+                        onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'https://placehold.co/600x400?text=Product+Image';
+                        }}
                     />
                 </div>
 

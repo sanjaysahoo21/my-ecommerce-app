@@ -61,6 +61,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                             alt={product.name}
                             className="product-card-image"
                             loading="lazy"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = 'https://placehold.co/600x400?text=Product+Image';
+                            }}
                         />
                         <span className="product-card-category">{product.category}</span>
                         {!product.inStock && (
