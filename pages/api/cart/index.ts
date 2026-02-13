@@ -11,14 +11,23 @@ export default async function handler(
 ) {
     // Check authentication
     const session = await getServerSession(req, res, authOptions);
-    if (!session?.user?.email) {
+
+    if (!session?.user) {
         return res.status(401).json({ error: 'Unauthorized. Please sign in.' });
     }
 
-    // Get user from database
-    const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-    });
+    const userId = (session.user as any).id;
+    let user;
+
+    if (userId) {
+        user = await prisma.user.findUnique({
+            where: { id: userId },
+        });
+    } else if (session.user.email) {
+        user = await prisma.user.findUnique({
+            where: { email: session.user.email },
+        });
+    }
 
     if (!user) {
         return res.status(401).json({ error: 'User not found.' });
