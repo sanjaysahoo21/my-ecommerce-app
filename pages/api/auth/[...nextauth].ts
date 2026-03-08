@@ -20,6 +20,10 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials?.email) return null;
 
+                // Only the designated test account is allowed via credentials
+                const TEST_ACCOUNT_EMAIL = 'test.user@example.com';
+                if (credentials.email !== TEST_ACCOUNT_EMAIL) return null;
+
                 // Find user in database
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },

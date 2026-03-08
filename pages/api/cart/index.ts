@@ -16,7 +16,7 @@ export default async function handler(
         return res.status(401).json({ error: 'Unauthorized. Please sign in.' });
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     let user;
 
     if (userId) {
@@ -168,9 +168,13 @@ async function handleAddToCart(
     });
 
     if (existingItem) {
+        const newQuantity = existingItem.quantity + validated.quantity;
+        if (newQuantity > 99) {
+            return res.status(400).json({ error: 'Total quantity cannot exceed 99 per item' });
+        }
         await prisma.cartItem.update({
             where: { id: existingItem.id },
-            data: { quantity: existingItem.quantity + validated.quantity },
+            data: { quantity: newQuantity },
         });
     } else {
         await prisma.cartItem.create({
